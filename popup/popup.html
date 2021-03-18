@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="./popup.css">
+    <style>
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+
+      <!-- TIMER -->
+    <div style="border: 1px solid black;" class="container" id="timer-container">
+      <h6>Pomodoro Timer</h6>
+      <p class="panel" id="timer">5:00</p>
+      <button class="btn btn-dark" id="start-timer">Start Timer</button>
+    </div>
+
+
+  <!--  TODO LIST  -->
+  
+    <div class="container" id="todo-container">
+      <input type='text' id="todo-field"></input> 
+      <button class="btn btn-primary" id="add-todo">Add To Do</button>
+      <button class="btn btn-warning" id="clear-todos">Clear</button>
+      <h2>To Dos</h2>
+      <div id="todo-list-container">
+      <ul id="todo-list"></ul>
+    </div>
+    </div>
+
+
+  </div>
+      <script src="popup.js"></script>
+  </body>
+</html>

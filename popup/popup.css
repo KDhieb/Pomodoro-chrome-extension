@@ -1,0 +1,24 @@
+.body {
+  background-color: #de3039;
+}
+
+.container {
+  width: 300px;
+  height: 500px;
+  background-color: #de3039;
+  color: white;
+}
+
+#timer-container {
+  height: 150px;
+}
+
+#todo-container {
+  height: 100px;
+}
+
+#todo-list-container {
+  max-height: 150px;
+  border: 1px solid black;
+  overflow: scroll;
+}
