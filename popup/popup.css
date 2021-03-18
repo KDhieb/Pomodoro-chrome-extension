@@ -9,16 +9,50 @@
   color: white;
 }
 
+#title {
+  width: fit-content;
+  margin-left: 200px;
+}
+
+#todo-field {
+  width: 90%;
+  margin-bottom: 10px;
+}
+
+#top-container {
+  height: fit-content;
+  width: fit-content;
+  width: 200px;
+  /* display: flex; */
+  /* justify-content: space-around; */
+  /* flex-direction: column; */
+  /* margin-left: 60px; */
+  /* padding-top: 20px; */
+}
+
 #timer-container {
-  height: 150px;
+  background-color: #333333;
+  /* border: 1px solid black; */
+  height: fit-content;
+  /* width: 175px; */
+  width: 100%;
+  margin-bottom: 10px;
+  /* margin-left: 60px; */
+  display: flex;
+  justify-content: center;
 }
 
-#todo-container {
+#bottom-container {
   height: 100px;
+  width: 300px;
+  /* display: flex; */
+  /* flex-wrap: wrap; */
+  /* justify-content: space-between; */
 }
 
-#todo-list-container {
-  max-height: 150px;
-  border: 1px solid black;
+#todo-list {
+  max-height: 200px;
+  max-width: 275px;
+  /* border: 1px solid black; */
   overflow: scroll;
 }

@@ -32,6 +32,7 @@ clearTodosBtn.onclick = function () {
 
 // Add Todo
 addTodoBtn.onclick = function () {
+  // let todo = {"title": todoField.value, "done": false}
   let todo = todoField.value;
   if (todo != "") {
     chrome.storage.local.get("todos", (data) => {
@@ -50,3 +51,5 @@ addTodoBtn.onclick = function () {
     });
   }
 };
+
+// mark todo as done
