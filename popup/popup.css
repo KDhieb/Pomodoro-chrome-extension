@@ -9,6 +9,14 @@
   color: white;
 }
 
+a:hover del {
+  color: #333333;
+}
+
+a:hover text {
+  color: #333333;
+}
+
 #title {
   width: fit-content;
   margin-left: 200px;
