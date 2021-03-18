@@ -2,7 +2,7 @@
   "name": "Pomo",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "A nifty pomodor productivity app!",
+  "description": "A nifty pomodoro productivity app!",
   "background": {
     "scripts": ["background.js"],
     "persistent": true

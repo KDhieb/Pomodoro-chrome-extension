@@ -30,7 +30,8 @@ a:hover text {
 #top-container {
   height: fit-content;
   width: fit-content;
-  width: 200px;
+  /* width: 200px  CHANGE BACK TO THIS WHEN DONE BUTTONS */
+  width: 250px;
   /* display: flex; */
   /* justify-content: space-around; */
   /* flex-direction: column; */

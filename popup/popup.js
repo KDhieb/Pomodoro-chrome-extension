@@ -7,10 +7,6 @@ window.onload = function () {
   refreshTodos();
 };
 
-chrome.browserAction.onClicked.addListener(function () {
-  alert("working?");
-});
-
 function refreshTodos() {
   while (todoList.firstChild) todoList.removeChild(todoList.firstChild);
   chrome.storage.local.get("todos", (data) => {
@@ -64,19 +60,6 @@ function changeTodoStatus(obj) {
   });
 }
 
-// function refreshTodos() {
-//   while (todoList.firstChild) todoList.removeChild(todoList.firstChild);
-//   chrome.storage.local.get("todos", (data) => {
-//     data.todos.forEach((todo) => {
-//       var li = document.createElement("LI");
-//       var text = document.createTextNode(todo);
-//       li.appendChild(text);
-//       todoList.prepend(li);
-//     });
-//     todoField.value = "";
-//   });
-// }
-
 // Clear all todos
 clearTodosBtn.onclick = function () {
   chrome.storage.local.clear();
@@ -104,3 +87,45 @@ addTodoBtn.onclick = function () {
     });
   }
 };
+
+// Timer Implementation
+
+var timer = document.querySelector("#timer");
+var startBtn = document.querySelector("#start-timer");
+var stopBtn = document.querySelector("#stop-timer");
+var resetBtn = document.querySelector("#reset-timer");
+
+const startTimer = () => {
+  // chrome.storage.local
+};
+
+var port = chrome.runtime.connect({ name: "popup" });
+
+startBtn.onclick = function () {
+  port.postMessage({ command: "start" });
+};
+
+stopBtn.onclick = function () {
+  port.postMessage({ command: "pause" });
+};
+
+resetBtn.onclick = function () {
+  alert("reset button");
+};
+
+// timer.innerHTML = "testing"; how to edit inner text value
+port.onMessage.addListener(function (msg) {
+  if (msg.command == "starting timer") {
+  } else if (msg.time) {
+    timer.innerHTML = `${msg.time.minutes}:${msg.time.seconds}`;
+  }
+});
+
+// chrome.runtime.onConnect.addListener(function (port) {
+//   console.assert(port.name == "timer");
+//   port.onMessage.addListener(function (msg) {
+//     if (msg.command == "time update") {
+//     }
+//     // alert("GOT TIME timerport");
+//   });
+// });
