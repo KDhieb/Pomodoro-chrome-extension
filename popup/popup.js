@@ -5,6 +5,7 @@ var clearTodosBtn = document.querySelector("#clear-todos");
 
 window.onload = function () {
   refreshTodos();
+  refreshTime();
 };
 
 function refreshTodos() {
@@ -102,11 +103,11 @@ const startTimer = () => {
 var port = chrome.runtime.connect({ name: "popup" });
 
 startBtn.onclick = function () {
-  port.postMessage({ command: "start" });
+  port.postMessage({ status: "start" });
 };
 
 stopBtn.onclick = function () {
-  port.postMessage({ command: "pause" });
+  port.postMessage({ status: "pause" });
 };
 
 resetBtn.onclick = function () {
@@ -115,17 +116,21 @@ resetBtn.onclick = function () {
 
 // timer.innerHTML = "testing"; how to edit inner text value
 port.onMessage.addListener(function (msg) {
-  if (msg.command == "starting timer") {
+  if (msg.status == "starting timer") {
   } else if (msg.time) {
-    timer.innerHTML = `${msg.time.minutes}:${msg.time.seconds}`;
+    // timer.innerHTML = `${msg.time.minutes}:${msg.time.seconds}`;
+    updateTime(msg);
+  } else if (msg.status == "done") {
+    alert("Timer finished! Break time!");
   }
 });
 
-// chrome.runtime.onConnect.addListener(function (port) {
-//   console.assert(port.name == "timer");
-//   port.onMessage.addListener(function (msg) {
-//     if (msg.command == "time update") {
-//     }
-//     // alert("GOT TIME timerport");
-//   });
-// });
+function refreshTime() {
+  chrome.runtime.sendMessage({ status: "refreshTime" }, (timeObj) => {
+    updateTime(timeObj);
+  });
+}
+
+function updateTime(timeObj) {
+  timer.innerHTML = `${timeObj.time.minutes}:${timeObj.time.seconds}`;
+}
