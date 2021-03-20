@@ -32,17 +32,36 @@ const chromeOnMessageListener = chrome.runtime.onMessage.addListener(function (
 
 function startTimerCaller(port) {
   if (!started) {
-    setTimeLeft(25, 0);
+    setTimeLeft(0, 4);
   }
   savePort = port;
   portConnected = true;
   startTimer();
 }
 
-function refreshTime() {}
+function refreshTime() {
+  updateStates();
+  if (!paused) {
+    // getUpdatedTimeLeft();
+    // startTimer();
+  }
+}
+
+// getUpdatedTimeLeft() {
+
+// }
+
+function updateStates() {
+  chrome.storage.local.get("states", (data) => {
+    started = data.states.started;
+    paused = data.states.paused;
+  });
+}
 
 function setTimeLeft(min, sec) {
   chrome.storage.local.set({ timeLeft: { minutes: min, seconds: sec } });
+  var now = new Date().getTime();
+  chrome.storage.local.set({ timeStamp: now });
 }
 
 function decrementTimeLeft() {
@@ -60,6 +79,72 @@ function decrementTimeLeft() {
       setTimeLeft(minutes, newSeconds);
     }
   });
+}
+
+// to keep track of time left and save necessary vars
+function pauseAndSave() {
+  paused = true;
+  // saveTimeLeft();
+}
+
+function saveStates() {
+  var states = { started: started, paused: paused };
+  chrome.storage.local.set({ states: states });
+}
+
+function startTimer() {
+  // if (paused == true) {
+  started = true;
+  paused = false;
+  // disconnectListener();
+  const interval = setInterval(() => {
+    chrome.storage.local.get("timeLeft", (data) => {
+      // var endTime = data.time.end;
+      var timeLeft = data.timeLeft;
+      // savePort.onDisconnect();
+      if (paused) {
+        clearInterval(interval);
+      }
+      // var timeObj = getTimeStrings(timeLeft);
+      var timeObj = {
+        minutes: timeLeft.minutes.toString(),
+        seconds: timeLeft.seconds.toString(),
+      };
+      // alert(
+      //   `min: ${timeLeft.minutes.toString()} sec: ${timeLeft.seconds.toString()} `
+      // );
+      if (portConnected && !paused) {
+        updateUiWithNewTime(stringifyTime(timeObj));
+        decrementTimeLeft();
+      }
+      if (timeObj.minutes <= 0 && timeObj.seconds <= 0) {
+        // timerFinished();
+        clearInterval(interval);
+      }
+    });
+  }, 1000);
+}
+
+// tells popup that timer is finished
+function timerFinished() {
+  alert("TIMER IS FINISHED YO!");
+  savePort.postMessage({ status: "done" });
+}
+
+function millToSecs(milliseconds) {
+  return Math.floor(milliseconds / 1000);
+}
+
+// sends message to popup port with new minutes and seconds
+function updateUiWithNewTime(timeObj) {
+  savePort.postMessage({ status: "time update", time: timeObj });
+}
+
+function stringifyTime(timeObj) {
+  newSeconds =
+    timeObj.seconds < 10 ? `0${timeObj.seconds}` : timeObj.seconds.toString();
+  // alert("new seconds:" + newSeconds);
+  return { minutes: timeObj.minutes.toString(), seconds: newSeconds };
 }
 
 // // to save time left in seconds
@@ -87,12 +172,11 @@ function decrementTimeLeft() {
 //   });
 // }
 
-// to keep track of time left and save necessary vars
-function pauseAndSave() {
-  paused = true;
-
-  // saveTimeLeft();
-}
+// function calculateTimeLeft(endTime) {
+//   var now = new Date();
+//   var timeLeft = millToSecs(endTime - now.getTime());
+//   return timeLeft;
+// }
 
 // function saveTimeLeft() {
 //   chrome.storage.local.get("time", (data) => {
@@ -128,87 +212,3 @@ function pauseAndSave() {
 //   });
 // }
 // }
-
-function saveStates() {
-  var states = { started: started, paused: paused };
-  chrome.storage.local.set({ states: states });
-}
-
-function startTimer() {
-  // if (paused == true) {
-  started = true;
-  paused = false;
-  // disconnectListener();
-  const interval = setInterval(() => {
-    decrementTimeLeft();
-    chrome.storage.local.get("timeLeft", (data) => {
-      // var endTime = data.time.end;
-      var timeLeft = data.timeLeft;
-      // savePort.onDisconnect();
-      if (paused) {
-        clearInterval(interval);
-      }
-      // var timeObj = getTimeStrings(timeLeft);
-      var timeObj = {
-        minutes: timeLeft.minutes.toString(),
-        seconds: timeLeft.seconds.toString(),
-      };
-      // alert(
-      //   `min: ${timeLeft.minutes.toString()} sec: ${timeLeft.seconds.toString()} `
-      // );
-      if (portConnected) {
-        updateUiWithNewTime(stringifyTime(timeObj));
-      }
-      if (timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
-        timerFinished();
-        clearInterval(interval);
-      }
-    });
-  }, 1000);
-}
-
-// function calculateTimeLeft(endTime) {
-//   var now = new Date();
-//   var timeLeft = millToSecs(endTime - now.getTime());
-//   return timeLeft;
-// }
-
-// tells popup that timer is finished
-function timerFinished() {
-  savePort.postMessage({ status: "done" });
-}
-
-function millToSecs(milliseconds) {
-  return Math.floor(milliseconds / 1000);
-}
-
-// sends message to popup port with new minutes and seconds
-function updateUiWithNewTime(timeObj) {
-  savePort.postMessage({ status: "time update", time: timeObj });
-}
-
-function stringifyTime(timeObj) {
-  newSeconds =
-    timeObj.seconds < 10 ? `0${timeObj.seconds}` : timeObj.seconds.toString();
-  return { minutes: timeObj.minutes.toString(), seconds: newSeconds };
-}
-
-// separates timeLeft to minutes and seconds and returns object containing string
-// function getTimeStrings(timeLeft) {
-//   var timeObj = {};
-//   timeObj.minutes = Math.floor(timeLeft / 60).toString();
-//   var secs = Math.floor(timeLeft % 60);
-//   timeObj.seconds = secs < 10 ? "0" + secs.toString() : secs.toString();
-//   return timeObj;
-// }
-
-// const disconnectListeners = savePort.onDisconnect.addListener(function (event) {
-// savePort.onDisconnect.removeListener(disconnectListeners);
-// chrome.runtime.onConnect.removeListener(chromeOnConnectListener);
-// chrome.runtime.onMessage.removeListener(chromeOnMessageListener);
-// savePort.onMessage.removeListener(storedListenerCallback);
-// portConnected = false;
-// if (paused == false) {
-//   pauseAndSave;
-// }
-// });

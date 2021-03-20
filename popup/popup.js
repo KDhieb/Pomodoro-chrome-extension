@@ -117,9 +117,14 @@ resetBtn.onclick = function () {
 // timer.innerHTML = "testing"; how to edit inner text value
 port.onMessage.addListener(function (msg) {
   if (msg.status == "starting timer") {
-  } else if (msg.time) {
+  } else if (msg.status == "time update") {
     // timer.innerHTML = `${msg.time.minutes}:${msg.time.seconds}`;
     updateTime(msg);
+    // updateTimePromise(msg).then((timeObj) => {
+    //   if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
+    //     alert("TIMER FINISHED");
+    //   }
+    // });
   } else if (msg.status == "done") {
     alert("Timer finished! Break time!");
   }
@@ -133,4 +138,16 @@ function refreshTime() {
 
 function updateTime(timeObj) {
   timer.innerHTML = `${timeObj.time.minutes}:${timeObj.time.seconds}`;
+  setTimeout(() => {
+    if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
+      alert("TIMER FINISHED");
+    }
+  }, 50);
 }
+
+// function updateTimePromise(timeObj) {
+//   return new Promise((resolve, reject) => {
+//     timer.innerHTML = `${timeObj.time.minutes}:${timeObj.time.seconds}`;
+//     resolve(timeObj);
+//   });
+// }
