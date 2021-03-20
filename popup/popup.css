@@ -67,3 +67,7 @@ a:hover text {
   /* border: 1px solid black; */
   overflow: scroll;
 }
+
+#start-timer {
+  width: 75px;
+}

@@ -13,12 +13,13 @@ const chromeOnConnectListener = chrome.runtime.onConnect.addListener(function (
   const chromeOnMessagePortListener = port.onMessage.addListener(function (
     msg
   ) {
-    if (msg.status == "start" && paused) {
+    if (msg.status == "start") {
       // port.postMessage({ status: "starting timer" });
       startTimerCaller(port);
     } else if (msg.status == "pause" && !paused) {
       // pauseAndSave();
-      paused = true;
+      startTimerCaller(port);
+      // paused = true;
     } else if (msg.status == "refresh") {
       // alert("REFRESHED.");
       savePort = port;
@@ -56,10 +57,16 @@ function startTimerCaller(port) {
 function refreshTime() {
   updateStates();
   if (started && !paused) clearPrevious = true;
+  updateButtonStatus();
   sendUpdatedTime();
+
   if (!paused) {
     startTimer();
   }
+}
+
+function updateButtonStatus() {
+  savePort.postMessage({ status: "button status", paused: paused });
 }
 
 function sendUpdatedTime() {
@@ -80,6 +87,11 @@ function updateStates() {
     started = data.states.started;
     paused = data.states.paused;
   });
+}
+
+function saveStates() {
+  var states = { started: started, paused: paused };
+  chrome.storage.local.set({ states: states });
 }
 
 function setTimeLeft(min, sec) {
@@ -107,20 +119,18 @@ function decrementTimeLeft() {
 }
 
 // to keep track of time left and save necessary vars
-function pauseAndSave() {
-  paused = true;
-  // saveTimeLeft();
-}
-
-function saveStates() {
-  var states = { started: started, paused: paused };
-  chrome.storage.local.set({ states: states });
-}
+// function pauseAndSave() {
+//   paused = true;
+//   // saveTimeLeft();
+// }
 
 function startTimer() {
-  // if (paused == true) {
+  // if (paused) !
+  // paused = false;
+  if (!clearPrevious) paused = !paused;
+  updateButtonStatus();
+
   started = true;
-  paused = false;
   // disconnectListener();
   const interval = setInterval(() => {
     chrome.storage.local.get("timeLeft", (data) => {

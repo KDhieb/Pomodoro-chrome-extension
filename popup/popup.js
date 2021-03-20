@@ -121,15 +121,17 @@ resetBtn.onclick = function () {
 port.onMessage.addListener(function (msg) {
   if (msg.status == "starting timer") {
   } else if (msg.status == "time update") {
-    // timer.innerHTML = `${msg.time.minutes}:${msg.time.seconds}`;
     updateTime(msg);
-    // updateTimePromise(msg).then((timeObj) => {
-    //   if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
-    //     alert("TIMER FINISHED");
-    //   }
-    // });
   } else if (msg.status == "done") {
-    // alert("Timer finished! Break time!");
+    console.log("done");
+  } else if (msg.status == "button status") {
+    if (msg.paused) {
+      // startBtn.innerHTML = "&#9616;&nbsp;&#9612;";
+      startBtn.innerHTML = "&#9658;";
+    } else {
+      startBtn.innerHTML = "&#9616;&nbsp;&#9612;";
+      // startBtn.innerHTML = "&#9658;";
+    }
   }
 });
 
