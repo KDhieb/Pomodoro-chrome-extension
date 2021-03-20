@@ -3,6 +3,8 @@ var savePort;
 var portConnected;
 var paused = true;
 var started = false;
+var windowOpen = false;
+var clearPrevious = false;
 
 const chromeOnConnectListener = chrome.runtime.onConnect.addListener(function (
   port
@@ -15,24 +17,36 @@ const chromeOnConnectListener = chrome.runtime.onConnect.addListener(function (
       // port.postMessage({ status: "starting timer" });
       startTimerCaller(port);
     } else if (msg.status == "pause" && !paused) {
-      pauseAndSave();
+      // pauseAndSave();
+      paused = true;
+    } else if (msg.status == "refresh") {
+      // alert("REFRESHED.");
+      savePort = port;
+      // startTimer();
+      refreshTime();
+    } else if (msg.status == "reset") {
+      setTimeLeft(25, 0);
+      paused = true;
+      started = false;
+      refreshTime();
     }
   });
 });
 
-const chromeOnMessageListener = chrome.runtime.onMessage.addListener(function (
-  request,
-  sender,
-  sendResponse
-) {
-  if (request.status == "refreshTime") {
-    refreshTime();
-  }
-});
+// const chromeOnMessageListener = chrome.runtime.onMessage.addListener(function (
+//   request,
+//   sender,
+//   sendResponse
+// ) {
+//   if (request.status == "refreshTime") {
+//     alert("refreshing!");
+//     refreshTime();
+//   }
+// });
 
 function startTimerCaller(port) {
   if (!started) {
-    setTimeLeft(0, 4);
+    setTimeLeft(25, 0);
   }
   savePort = port;
   portConnected = true;
@@ -41,17 +55,27 @@ function startTimerCaller(port) {
 
 function refreshTime() {
   updateStates();
+  if (started && !paused) clearPrevious = true;
+  sendUpdatedTime();
   if (!paused) {
-    // getUpdatedTimeLeft();
-    // startTimer();
+    startTimer();
   }
 }
 
-// getUpdatedTimeLeft() {
+function sendUpdatedTime() {
+  chrome.storage.local.get("timeLeft", (data) => {
+    var timeLeft = data.timeLeft;
 
-// }
+    var timeObj = {
+      minutes: timeLeft.minutes.toString(),
+      seconds: timeLeft.seconds.toString(),
+    };
+    updateUiWithNewTime(stringifyTime(timeObj));
+  });
+}
 
 function updateStates() {
+  windowOpen = true;
   chrome.storage.local.get("states", (data) => {
     started = data.states.started;
     paused = data.states.paused;
@@ -66,6 +90,7 @@ function setTimeLeft(min, sec) {
 
 function decrementTimeLeft() {
   chrome.storage.local.get("timeLeft", (data) => {
+    // console.log("is this triggering");
     var timeLeftObj = data.timeLeft;
     // alert(data.timeLeft);
     var newSeconds = timeLeftObj.seconds - 1;
@@ -99,36 +124,55 @@ function startTimer() {
   // disconnectListener();
   const interval = setInterval(() => {
     chrome.storage.local.get("timeLeft", (data) => {
-      // var endTime = data.time.end;
-      var timeLeft = data.timeLeft;
-      // savePort.onDisconnect();
       if (paused) {
         clearInterval(interval);
       }
-      // var timeObj = getTimeStrings(timeLeft);
+      console.log(clearPrevious);
+      if (!paused && clearPrevious) {
+        clearInterval(interval);
+        clearPrevious = false;
+        return;
+      }
+
+      var timeLeft = data.timeLeft;
+
       var timeObj = {
         minutes: timeLeft.minutes.toString(),
         seconds: timeLeft.seconds.toString(),
       };
-      // alert(
-      //   `min: ${timeLeft.minutes.toString()} sec: ${timeLeft.seconds.toString()} `
-      // );
-      if (portConnected && !paused) {
-        updateUiWithNewTime(stringifyTime(timeObj));
+
+      if (!paused) {
         decrementTimeLeft();
+        if (windowOpen && portConnected) {
+          updateUiWithNewTime(stringifyTime(timeObj));
+          // setTimeout(() => {
+          //   console.log("Updating time");
+          // }, 50);
+        }
       }
-      if (timeObj.minutes <= 0 && timeObj.seconds <= 0) {
-        // timerFinished();
+      if (timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
+        timerFinished(windowOpen);
         clearInterval(interval);
       }
     });
   }, 1000);
 }
 
-// tells popup that timer is finished
-function timerFinished() {
-  alert("TIMER IS FINISHED YO!");
-  savePort.postMessage({ status: "done" });
+// tells user that timer is finished
+function timerFinished(windowOpen) {
+  if (!windowOpen) {
+    alert("TIMER IS FINISHED. COURTESY OF BACKGROUND.JS");
+  } else {
+    setTimeout(() => {
+      alert("TIMER FINISHED. Popup open!");
+    }, 50);
+  }
+  // if (windowOpen) {
+  //   // alert("TIMER IS FINISHED YO!");
+  //   savePort.postMessage({ status: "done" });
+  // } else {
+  //   alert("TIMER IS FINISHED. COURTESY OF BACKGROUND.JS");
+  // }
 }
 
 function millToSecs(milliseconds) {
@@ -146,6 +190,17 @@ function stringifyTime(timeObj) {
   // alert("new seconds:" + newSeconds);
   return { minutes: timeObj.minutes.toString(), seconds: newSeconds };
 }
+
+// handle when popup is closed
+chrome.runtime.onConnect.addListener(function (externalPort) {
+  externalPort.onDisconnect.addListener(function () {
+    windowOpen = false;
+    console.log("onDisconnect");
+    // Do stuff that should happen when popup window closes here
+  });
+  windowOpen = true;
+  console.log("onConnect");
+});
 
 // // to save time left in seconds
 // function setTargetDate(minutes, seconds) {

@@ -6,6 +6,9 @@ var clearTodosBtn = document.querySelector("#clear-todos");
 window.onload = function () {
   refreshTodos();
   refreshTime();
+  setTimeout(() => {
+    console.log("Refreshing time");
+  }, 50);
 };
 
 function refreshTodos() {
@@ -111,7 +114,7 @@ stopBtn.onclick = function () {
 };
 
 resetBtn.onclick = function () {
-  alert("reset button");
+  port.postMessage({ status: "reset" });
 };
 
 // timer.innerHTML = "testing"; how to edit inner text value
@@ -126,21 +129,19 @@ port.onMessage.addListener(function (msg) {
     //   }
     // });
   } else if (msg.status == "done") {
-    alert("Timer finished! Break time!");
+    // alert("Timer finished! Break time!");
   }
 });
 
 function refreshTime() {
-  chrome.runtime.sendMessage({ status: "refreshTime" }, (timeObj) => {
-    updateTime(timeObj);
-  });
+  port.postMessage({ status: "refresh" });
 }
 
 function updateTime(timeObj) {
   timer.innerHTML = `${timeObj.time.minutes}:${timeObj.time.seconds}`;
   setTimeout(() => {
     if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
-      alert("TIMER FINISHED");
+      // alert("TIMER FINISHED");
     }
   }, 50);
 }
