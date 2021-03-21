@@ -34,21 +34,11 @@ const chromeOnConnectListener = chrome.runtime.onConnect.addListener(function (
   });
 });
 
-// const chromeOnMessageListener = chrome.runtime.onMessage.addListener(function (
-//   request,
-//   sender,
-//   sendResponse
-// ) {
-//   if (request.status == "refreshTime") {
-//     alert("refreshing!");
-//     refreshTime();
-//   }
-// });
-
 function startTimerCaller(port) {
   if (!started) {
     setTimeLeft(25, 0);
   }
+  // clearPrevious = true;
   savePort = port;
   portConnected = true;
   startTimer();
@@ -72,7 +62,6 @@ function updateButtonStatus() {
 function sendUpdatedTime() {
   chrome.storage.local.get("timeLeft", (data) => {
     var timeLeft = data.timeLeft;
-
     var timeObj = {
       minutes: timeLeft.minutes.toString(),
       seconds: timeLeft.seconds.toString(),
@@ -118,12 +107,6 @@ function decrementTimeLeft() {
   });
 }
 
-// to keep track of time left and save necessary vars
-// function pauseAndSave() {
-//   paused = true;
-//   // saveTimeLeft();
-// }
-
 function startTimer() {
   // if (paused) !
   // paused = false;
@@ -141,6 +124,7 @@ function startTimer() {
       if (!paused && clearPrevious) {
         clearInterval(interval);
         clearPrevious = false;
+        // paused = !paused; // this
         return;
       }
 

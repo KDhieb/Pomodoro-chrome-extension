@@ -9,6 +9,7 @@ window.onload = function () {
   setTimeout(() => {
     console.log("Refreshing time");
   }, 50);
+  enableClickShield();
 };
 
 function refreshTodos() {
@@ -96,7 +97,7 @@ addTodoBtn.onclick = function () {
 
 var timer = document.querySelector("#timer");
 var startBtn = document.querySelector("#start-timer");
-var stopBtn = document.querySelector("#stop-timer");
+// var stopBtn = document.querySelector("#stop-timer");
 var resetBtn = document.querySelector("#reset-timer");
 
 const startTimer = () => {
@@ -109,9 +110,9 @@ startBtn.onclick = function () {
   port.postMessage({ status: "start" });
 };
 
-stopBtn.onclick = function () {
-  port.postMessage({ status: "pause" });
-};
+// stopBtn.onclick = function () {
+//   port.postMessage({ status: "pause" });
+// };
 
 resetBtn.onclick = function () {
   port.postMessage({ status: "reset" });
@@ -146,6 +147,34 @@ function updateTime(timeObj) {
       // alert("TIMER FINISHED");
     }
   }, 50);
+}
+
+function enableClickShield() {
+  // var btns = document.getElementsByTagName("button");
+  // for (var i = 0; i < btns.length; i++) {
+  startBtn.addEventListener("click", function () {
+    disableButton(true);
+    setTimeout(function () {
+      disableButtons(false);
+    }, 600);
+  });
+  // }
+}
+
+function disableButtons(state) {
+  startBtn.disabled = state;
+  alert("this?");
+}
+
+function alertStatus() {
+  $("#idbuttonUpdateStatus").attr("disabled", "disabled");
+  setTimeout(enable, 1000);
+  $("#doneStatus").hide();
+  $("#loadingStatus").show();
+}
+
+function enable() {
+  $("#idbuttonUpdateStatus").removeAttr("disabled");
 }
 
 // function updateTimePromise(timeObj) {
