@@ -111,10 +111,6 @@ startBtn.onclick = function () {
   port.postMessage({ status: "start" });
 };
 
-// stopBtn.onclick = function () {
-//   port.postMessage({ status: "pause" });
-// };
-
 resetBtn.onclick = function () {
   port.postMessage({ status: "reset" });
 };
@@ -151,36 +147,14 @@ function updateTime(timeObj) {
 }
 
 function enableClickShield() {
-  // var btns = document.getElementsByTagName("button");
-  // for (var i = 0; i < btns.length; i++) {
   startBtn.addEventListener("click", function () {
     disableButton(true);
     setTimeout(function () {
-      disableButtons(false);
-    }, 600);
+      disableButton(false);
+    }, 900);
   });
-  // }
 }
 
-function disableButtons(state) {
+function disableButton(state) {
   startBtn.disabled = state;
-  alert("this?");
 }
-
-function alertStatus() {
-  $("#idbuttonUpdateStatus").attr("disabled", "disabled");
-  setTimeout(enable, 1000);
-  $("#doneStatus").hide();
-  $("#loadingStatus").show();
-}
-
-function enable() {
-  $("#idbuttonUpdateStatus").removeAttr("disabled");
-}
-
-// function updateTimePromise(timeObj) {
-//   return new Promise((resolve, reject) => {
-//     timer.innerHTML = `${timeObj.time.minutes}:${timeObj.time.seconds}`;
-//     resolve(timeObj);
-//   });
-// }
