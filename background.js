@@ -14,18 +14,13 @@ const chromeOnConnectListener = chrome.runtime.onConnect.addListener(function (
     msg
   ) {
     if (msg.status == "start") {
-      // port.postMessage({ status: "starting timer" });
       startTimerCaller(port);
-    } else if (msg.status == "pause" && !paused) {
-      // pauseAndSave();
-      startTimerCaller(port);
-      // paused = true;
     } else if (msg.status == "refresh") {
-      // alert("REFRESHED.");
       savePort = port;
-      // startTimer();
       refreshTime();
     } else if (msg.status == "reset") {
+      // chrome.browserAction.setIcon({ path: { 19: "icons/tomato.png" } });
+      // chrome.browserAction.setBadgeBackgroundColor({color:[190, 190, 190, 230]});
       setTimeLeft(25, 0);
       paused = true;
       started = false;
@@ -38,7 +33,6 @@ function startTimerCaller(port) {
   if (!started) {
     setTimeLeft(25, 0);
   }
-  // clearPrevious = true;
   savePort = port;
   portConnected = true;
   startTimer();
@@ -46,10 +40,10 @@ function startTimerCaller(port) {
 
 function refreshTime() {
   updateStates();
+  clearBrowserBadge();
   if (started && !paused) clearPrevious = true;
   updateButtonStatus();
   sendUpdatedTime();
-
   if (!paused) {
     startTimer();
   }
@@ -91,9 +85,7 @@ function setTimeLeft(min, sec) {
 
 function decrementTimeLeft() {
   chrome.storage.local.get("timeLeft", (data) => {
-    // console.log("is this triggering");
     var timeLeftObj = data.timeLeft;
-    // alert(data.timeLeft);
     var newSeconds = timeLeftObj.seconds - 1;
 
     var minutes = timeLeftObj.minutes;
@@ -108,13 +100,10 @@ function decrementTimeLeft() {
 }
 
 function startTimer() {
-  // if (paused) !
-  // paused = false;
   if (!clearPrevious) paused = !paused;
   updateButtonStatus();
 
   started = true;
-  // disconnectListener();
   const interval = setInterval(() => {
     chrome.storage.local.get("timeLeft", (data) => {
       if (paused) {
@@ -124,7 +113,6 @@ function startTimer() {
       if (!paused && clearPrevious) {
         clearInterval(interval);
         clearPrevious = false;
-        // paused = !paused; // this
         return;
       }
 
@@ -137,11 +125,10 @@ function startTimer() {
 
       if (!paused) {
         decrementTimeLeft();
+        stringTimeObj = stringifyTime(timeObj);
+        updateBrowserBadge(stringTimeObj);
         if (windowOpen && portConnected) {
-          updateUiWithNewTime(stringifyTime(timeObj));
-          // setTimeout(() => {
-          //   console.log("Updating time");
-          // }, 50);
+          updateUiWithNewTime(stringTimeObj);
         }
       }
       if (timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
@@ -154,6 +141,7 @@ function startTimer() {
 
 // tells user that timer is finished
 function timerFinished(windowOpen) {
+  clearBrowserBadge();
   if (!windowOpen) {
     alert("TIMER IS FINISHED. COURTESY OF BACKGROUND.JS");
   } else {
@@ -161,16 +149,21 @@ function timerFinished(windowOpen) {
       alert("TIMER FINISHED. Popup open!");
     }, 50);
   }
-  // if (windowOpen) {
-  //   // alert("TIMER IS FINISHED YO!");
-  //   savePort.postMessage({ status: "done" });
-  // } else {
-  //   alert("TIMER IS FINISHED. COURTESY OF BACKGROUND.JS");
-  // }
 }
 
-function millToSecs(milliseconds) {
-  return Math.floor(milliseconds / 1000);
+function clearBrowserBadge() {
+  chrome.browserAction.setBadgeText({ text: "" });
+}
+
+function updateBrowserBadge(timeObj) {
+  // chrome.browserAction.setIcon({ path: "icons/tomato.png" });
+  if (timeObj.minutes == 0) {
+    chrome.browserAction.setBadgeText({ text: "< 1" });
+  } else {
+    chrome.browserAction.setBadgeText({
+      text: `${timeObj.minutes}`,
+    });
+  }
 }
 
 // sends message to popup port with new minutes and seconds
@@ -190,74 +183,7 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
   externalPort.onDisconnect.addListener(function () {
     windowOpen = false;
     console.log("onDisconnect");
-    // Do stuff that should happen when popup window closes here
   });
   windowOpen = true;
   console.log("onConnect");
 });
-
-// // to save time left in seconds
-// function setTargetDate(minutes, seconds) {
-//   var endDate = new Date();
-//   endDate.setSeconds(
-//     endDate.getSeconds() + parseInt(seconds) + parseInt(minutes) * 60
-//   );
-//   chrome.storage.local.set({ time: { end: endDate.getTime() } });
-// }
-
-// function setTargetDateTwo() {
-//   chrome.storage.local.get("timeLeft", (data) => {
-//     var endDate = new Date();
-//     var timeObj = getTimeStrings(data.timeLeft);
-//     alert("timeLeft:" + data.timeLeft);
-//     alert(`min ${timeObj.minutes} sec ${timeObj.seconds}`);
-//     endDate.setSeconds(
-//       endDate.getSeconds() +
-//         parseInt(timeObj.seconds) +
-//         parseInt(timeObj.minutes) * 60
-//     );
-//     alert(endDate);
-//     chrome.storage.local.set({ time: { end: endDate.getTime() } });
-//   });
-// }
-
-// function calculateTimeLeft(endTime) {
-//   var now = new Date();
-//   var timeLeft = millToSecs(endTime - now.getTime());
-//   return timeLeft;
-// }
-
-// function saveTimeLeft() {
-//   chrome.storage.local.get("time", (data) => {
-//     var timeLeft = calculateTimeLeft(data.time.end);
-//     chrome.storage.local.set({ timeLeft: timeLeft });
-//   });
-// }
-
-//  begins interval to update popup UI
-// function startTimer() {
-//   // if (paused == true) {
-//   started = true;
-//   paused = false;
-//   // disconnectListener();
-//   chrome.storage.local.get("time", (data) => {
-//     var endTime = data.time.end;
-//     var timeLeft = calculateTimeLeft(endTime);
-//     const interval = setInterval(() => {
-//       // savePort.onDisconnect();
-//       if (paused) {
-//         clearInterval(interval);
-//       }
-//       var timeObj = getTimeStrings(timeLeft);
-//       if (portConnected) {
-//         updateUiWithNewTime(timeObj);
-//       }
-//       if (timeLeft <= 0) {
-//         timerFinished();
-//         clearInterval(interval);
-//       }
-//       timeLeft--;
-//     }, 1000);
-//   });
-// }
-// }

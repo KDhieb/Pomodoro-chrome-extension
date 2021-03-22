@@ -8,7 +8,7 @@ window.onload = function () {
   refreshTime();
   setTimeout(() => {
     console.log("Refreshing time");
-  }, 50);
+  }, 1);
   enableClickShield();
 };
 
@@ -67,7 +67,8 @@ function changeTodoStatus(obj) {
 
 // Clear all todos
 clearTodosBtn.onclick = function () {
-  chrome.storage.local.clear();
+  // chrome.storage.local.clear();
+  chrome.storage.local.set({ todos: [] });
   refreshTodos();
 };
 
