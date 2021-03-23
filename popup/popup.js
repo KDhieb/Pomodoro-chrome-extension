@@ -10,6 +10,7 @@ window.onload = function () {
     console.log("Refreshing time");
   }, 1);
   enableClickShield();
+  setMinuteListener();
 };
 
 function refreshTodos() {
@@ -95,15 +96,10 @@ addTodoBtn.onclick = function () {
 };
 
 // Timer Implementation
-
-var timer = document.querySelector("#timer");
+var timerMin = document.querySelector("#timer-min");
+var timerSec = document.querySelector("#timer-sec");
 var startBtn = document.querySelector("#start-timer");
-// var stopBtn = document.querySelector("#stop-timer");
 var resetBtn = document.querySelector("#reset-timer");
-
-const startTimer = () => {
-  // chrome.storage.local
-};
 
 var port = chrome.runtime.connect({ name: "popup" });
 
@@ -114,6 +110,10 @@ startBtn.onclick = function () {
 resetBtn.onclick = function () {
   port.postMessage({ status: "reset" });
 };
+
+function setTime(minutes, seconds) {
+  port.postMessage({ status: "set", minutes: minutes, seconds: seconds });
+}
 
 // timer.innerHTML = "testing"; how to edit inner text value
 port.onMessage.addListener(function (msg) {
@@ -126,8 +126,12 @@ port.onMessage.addListener(function (msg) {
     if (msg.paused) {
       // startBtn.innerHTML = "&#9616;&nbsp;&#9612;";
       startBtn.innerHTML = "&#9658;";
+      timerMin.contentEditable = "true";
+      // timerSec.contentEditable = "true";
     } else {
       startBtn.innerHTML = "&#9616;&nbsp;&#9612;";
+      timerMin.contentEditable = "false";
+      // timerSec.contentEditable = "false";
       // startBtn.innerHTML = "&#9658;";
     }
   }
@@ -138,7 +142,8 @@ function refreshTime() {
 }
 
 function updateTime(timeObj) {
-  timer.innerHTML = `${timeObj.time.minutes}:${timeObj.time.seconds}`;
+  timerMin.innerHTML = `${timeObj.time.minutes}`;
+  timerSec.innerHTML = `${timeObj.time.seconds}`;
   setTimeout(() => {
     if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
       // alert("TIMER FINISHED");
@@ -180,4 +185,35 @@ collapseBtn.onclick = function () {
   }
 };
 
-var addTodoBtn = document.getElementById;
+// change time
+
+function setMinuteListener(keyup, blur) {
+  timerMin.addEventListener("keyup", keyup);
+  timerMin.addEventListener("delete", keyup);
+  timerMin.addEventListener("blur", blur);
+}
+
+var keyChange = false;
+
+setMinuteListener(
+  () => {
+    keyChange = true;
+  },
+  () => {
+    if (keyChange) {
+      keyChange = false;
+      var minuteValue = timerMin.innerHTML;
+      if (isValidNumber(minuteValue)) {
+        timerSec.innerHTML = "00";
+        port.postMessage({ status: "set", minutes: parseInt(minuteValue) });
+      } else {
+        timerMin.innerHTML = "25";
+        port.postMessage({ status: set, minutes: 25 });
+      }
+    }
+  }
+);
+
+function isValidNumber(string) {
+  return /^\d+$/.test(string);
+}
