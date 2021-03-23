@@ -124,15 +124,11 @@ port.onMessage.addListener(function (msg) {
     console.log("done");
   } else if (msg.status == "button status") {
     if (msg.paused) {
-      // startBtn.innerHTML = "&#9616;&nbsp;&#9612;";
       startBtn.innerHTML = "&#9658;";
       timerMin.contentEditable = "true";
-      // timerSec.contentEditable = "true";
     } else {
       startBtn.innerHTML = "&#9616;&nbsp;&#9612;";
       timerMin.contentEditable = "false";
-      // timerSec.contentEditable = "false";
-      // startBtn.innerHTML = "&#9658;";
     }
   }
 });

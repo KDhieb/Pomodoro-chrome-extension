@@ -180,16 +180,22 @@ function startTimer() {
 }
 
 // tells user that timer is finished
-function timerFinished(windowOpen) {
+
+function timerFinished() {
   clearBrowserBadge();
-  if (!windowOpen) {
-    alert("TIMER IS FINISHED. COURTESY OF BACKGROUND.JS");
-  } else {
-    setTimeout(() => {
-      alert("TIMER FINISHED. Popup open!");
-    }, 50);
-  }
+  alert("Timer finished. Time for a break! ");
 }
+
+// function timerFinished(windowOpen) {
+//   clearBrowserBadge();
+//   if (!windowOpen) {
+//     alert("TIMER IS FINISHED. COURTESY OF BACKGROUND.JS");
+//   } else {
+//     setTimeout(() => {
+//       alert("TIMER FINISHED. Popup open!");
+//     }, 50);
+//   }
+// }
 
 function clearBrowserBadge() {
   chrome.browserAction.setBadgeText({ text: "" });
