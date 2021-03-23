@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="./popup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
     </style>
   </head>
@@ -11,36 +12,49 @@
   <body>
     <div class="container" id="top-wrapper">
 
-
             <!-- TIMER -->
     <div class="container" id=top-container>
       <h6 style="text-align: center;">pomo</h6>
+      <!-- <br> -->
       <div id="timer-container">
       <h1 class="panel" id="timer">25:00</h1>
       </div>
-      <button class="btn btn-dark" id="start-timer">Start &#9658;</button>
-      <button class="btn btn-dark" id="reset-timer">Reset &#8635;</button>
-      <button class="" id="test">+</button>
+      <button class="btn btn-primary" id="start-timer">&#9658;</button>
+      <button class="btn btn-warning" id="reset-timer">&#8635;</button>
+      
     </div>
 
-    <hr>
+
+    <!-- <hr> -->
+  </div>
+  <button class="btn btn-secondary btn-block" id="collapsible">Todos<h6></h6>  <h6 id="collapsible-text">+</h6></button>
 
   <!--  TODO LIST  -->
     <div  id="bottom-container">
-      <input type='text' id="todo-field"></input> 
-      <br>
-      <button class="btn btn-primary" id="add-todo">Add</button>
-      <button class="btn btn-warning" id="clear-todos">Clear</button>
-      <br>
+      <div id="bottom-wrapper">
 
-      <div id=todo-container>
-      <h2>To Do List</h2>
-      <ul id="todo-list"></ul>
+      <div id=todo-container> 
+        <ul id="todo-list"</ul>
+         <!-- <ul ></ul> -->
+     </div> 
+     <br>
+
+     <div id="todo-form-wrapper">
+     <input type='text' autocomplete="off" id="todo-field"></input> 
+     <br>
+     <button class="btn btn-primary" id="add-todo">Add</button>
+     &nbsp; &nbsp;
+     <button class="btn btn-warning" id="clear-todos">Clear</button>
+    </div>
+      
+      <!-- <br> -->
+    
+      <!-- <br> -->
+     </div>
+      <!-- </div> -->
     </div>
 
-    </div>
-
-  </div>
+  <!-- </div> -->
       <script src="popup.js"></script>
   </body>
 </html>

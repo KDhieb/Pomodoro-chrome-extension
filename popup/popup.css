@@ -4,19 +4,19 @@
 
 .container {
   width: 300px;
-  height: 500px;
+  /* height: 500px; */
   background-color: #de3039;
   color: white;
 }
 
 a:hover del {
   /* color: #333333; */
-  color: #00065e;
+  color: #22e359;
 }
 
 a:hover text {
   /* color: #333333; */
-  color: #00065e;
+  color: #de3039;
 }
 
 #title {
@@ -29,11 +29,18 @@ a:hover text {
   margin-bottom: 10px;
 }
 
+#top-wrapper {
+  padding-bottom: 20px;
+  /* height: 200px; */
+  /* min-height: 210px; */
+}
+
 #top-container {
   height: fit-content;
   width: fit-content;
   /* width: 200px  CHANGE BACK TO THIS WHEN DONE BUTTONS */
   width: 250px;
+  padding-top: 5px;
   /* display: flex; */
   /* justify-content: space-around; */
   /* flex-direction: column; */
@@ -54,20 +61,80 @@ a:hover text {
 }
 
 #bottom-container {
-  height: 100px;
-  width: 300px;
+  display: none;
+  /* height: 50px; */
+  /* width: 300px; */
+  width: 100%;
+  background-color: #333333;
   /* display: flex; */
   /* flex-wrap: wrap; */
   /* justify-content: space-between; */
 }
 
-#todo-list {
+#bottom-wrapper {
+  width: 100%;
+  max-width: 100%;
+  /* height: 500px; */
+}
+
+#todo-container {
+  /* border: green 1px solid; */
+  height: 200px;
+  background-color: #333333;
+  overflow-wrap: break-word;
+}
+
+/* #todo-list {
+  border: #de3039 1px solid;
+  color: #ffffff;
+  height: 200px;
+  width: 100%;
   max-height: 200px;
-  max-width: 275px;
+  /* max-width: 275px; */
+/* background-color: #333333; */
+/* border: 1px solid black; */
+/* overflow: visible; */
+/* } */
+
+#todo-list {
+  /* border: purple 1px solid; */
+  color: #ffffff;
+  height: 200px;
+  max-height: 200px;
+  /* height: 200px; */
+  width: 100%;
+
+  max-width: 290px;
+
+  /* max-width: 275px; */
+  background-color: #333333;
   /* border: 1px solid black; */
   overflow: scroll;
 }
 
+.li {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 #start-timer {
+  margin-left: 32px;
   width: 75px;
+}
+
+#reset-timer {
+  width: 75px;
+}
+
+#collapsible {
+  /* width: 100%; */
+  border-radius: 0 !important;
+  display: flex;
+  justify-content: space-between;
+}
+
+#todo-form-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }

@@ -158,3 +158,26 @@ function enableClickShield() {
 function disableButton(state) {
   startBtn.disabled = state;
 }
+
+var collapseBtn = document.getElementById("collapsible");
+var collapseText = document.getElementById("collapsible-text");
+var topWrapper = document.getElementById("top-wrapper");
+var bottomContainer = document.getElementById("bottom-container");
+
+toggle = false;
+collapseBtn.onclick = function () {
+  toggle = !toggle;
+  if (toggle) {
+    // topWrapper.style.height = "800px";
+    bottomContainer.style.display = "block";
+    bottomContainer.style.height = "320px";
+    collapseText.innerHTML = "-";
+  } else {
+    // topWrapper.style.height = "250px";
+    bottomContainer.style.display = "none";
+    bottomContainer.style.height = "50px";
+    collapseText.innerHTML = "+";
+  }
+};
+
+var addTodoBtn = document.getElementById;
