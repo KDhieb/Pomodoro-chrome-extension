@@ -142,7 +142,7 @@ function updateTime(timeObj) {
   timerSec.innerHTML = `${timeObj.time.seconds}`;
   setTimeout(() => {
     if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
-      // alert("TIMER FINISHED");
+      // can also handle it here
     }
   }, 50);
 }
