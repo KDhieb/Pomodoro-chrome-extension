@@ -1,0 +1,56 @@
+<html lang="en">
+  <head>
+    <!-- <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    /> -->
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./options.css" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="main-body" class="container">
+      <div class="flex-settings">
+        <p>Enable Breaks</p>
+        <label class="switch">
+          <input id="break-switch" type="checkbox" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="flex-settings">
+        <p>Set break time:</p>
+
+        <div style="display: flex; size: 5px">
+          <h3
+            style="border: 1px solid white; padding: 0px 15px"
+            class="single-line"
+            id="break-time"
+            contenteditable="true"
+          >
+            5
+          </h3>
+          <h3>&nbsp;min</h3>
+        </div>
+        <!-- <span class="slider round"></span> -->
+        <!-- </label> -->
+      </div>
+      <div style="display: flex; justify-content: center">
+        <a role="button" id="save" class="btn btn-primary">save</a>
+      </div>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>

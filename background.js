@@ -5,7 +5,9 @@ var paused = true;
 var started = false;
 var windowOpen = false;
 var clearPrevious = false;
-// var workMode = true;
+var workMode = true;
+var pausedMinutes = null;
+var pausedSeconds = null;
 
 chrome.runtime.onStartup.addListener(() => {
   resetTimeLeft();
@@ -15,10 +17,10 @@ const chromeOnConnectListener = chrome.runtime.onConnect.addListener(function (
   port
 ) {
   console.assert(port.name == "popup");
-  const chromeOnMessagePortListener = port.onMessage.addListener(function (
-    msg
-  ) {
+  port.onMessage.addListener(function (msg) {
     if (msg.status == "start") {
+      pausedMinutes = msg.minutes;
+      pausedSeconds = msg.seconds;
       startTimerCaller(port);
     } else if (msg.status == "refresh") {
       savePort = port;
@@ -58,6 +60,7 @@ function refreshTime() {
   updateStates();
   clearBrowserBadge();
   if (started && !paused) clearPrevious = true;
+  if (started && paused) setTimeLeft(pausedMinutes, pausedSeconds);
   updateButtonStatus();
   sendUpdatedTime();
   if (!paused) {
@@ -173,17 +176,6 @@ function timerFinished() {
   clearBrowserBadge();
   alert("Timer finished. Time for a break! ");
 }
-
-// function timerFinished(windowOpen) {
-//   clearBrowserBadge();
-//   if (!windowOpen) {
-//     alert("TIMER IS FINISHED. COURTESY OF BACKGROUND.JS");
-//   } else {
-//     setTimeout(() => {
-//       alert("TIMER FINISHED. Popup open!");
-//     }, 50);
-//   }
-// }
 
 function clearBrowserBadge() {
   chrome.browserAction.setBadgeText({ text: "" });

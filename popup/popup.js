@@ -104,7 +104,9 @@ var resetBtn = document.querySelector("#reset-timer");
 var port = chrome.runtime.connect({ name: "popup" });
 
 startBtn.onclick = function () {
-  port.postMessage({ status: "start" });
+  var min = timerMin.innerHTML;
+  var sec = timerSec.innerHTML;
+  port.postMessage({ status: "start", minutes: min, seconds: sec });
 };
 
 resetBtn.onclick = function () {
@@ -213,3 +215,19 @@ setMinuteListener(
 function isValidNumber(string) {
   return /^\d+$/.test(string);
 }
+
+document.getElementById("settings").onclick = () => {
+  if (chrome.runtime.openOptionsPage) {
+    chrome.runtime.openOptionsPage();
+  } else {
+    window.open(chrome.runtime.getURL("options.html"));
+  }
+};
+
+// document.querySelector("#settings").addEventListener(() => {
+//   if (chrome.runtime.openOptionsPage) {
+//     chrome.runtime.openOptionsPage();
+//   } else {
+//     window.open(chrome.runtime.getURL("options.html"));
+//   }
+// });
