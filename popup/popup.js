@@ -200,9 +200,10 @@ setMinuteListener(
   () => {
     if (keyChange) {
       keyChange = false;
-      var minuteValue = timerMin.innerHTML;
+      var minuteValue = timerMin.innerHTML.trim();
       if (isValidNumber(minuteValue)) {
         timerSec.innerHTML = "00";
+        // timerMin.innerHTML = minuteValue;
         port.postMessage({ status: "set", minutes: parseInt(minuteValue) });
       } else {
         timerMin.innerHTML = "25";

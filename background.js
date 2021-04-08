@@ -40,6 +40,7 @@ function startTimerCaller(port) {
   if (!started) {
     resetTimeLeft();
   }
+  // saveStates();
   savePort = port;
   portConnected = true;
   startTimer();
@@ -60,7 +61,7 @@ function refreshTime() {
   updateStates();
   clearBrowserBadge();
   if (started && !paused) clearPrevious = true;
-  if (started && paused) setTimeLeft(pausedMinutes, pausedSeconds);
+  // if (started && paused) setTimeLeft(pausedMinutes, pausedSeconds);
   updateButtonStatus();
   sendUpdatedTime();
   if (!paused) {
@@ -129,6 +130,7 @@ function decrementTimeLeft() {
 
 function startTimer() {
   if (!clearPrevious) paused = !paused;
+  if (paused) setTimeLeft(pausedMinutes, pausedSeconds);
   updateButtonStatus();
 
   started = true;
@@ -164,7 +166,7 @@ function startTimer() {
         }
       }
       if (timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
-        timerFinished(windowOpen);
+        timerFinished();
         clearInterval(interval);
       }
     });
@@ -206,6 +208,7 @@ function stringifyTime(timeObj) {
 chrome.runtime.onConnect.addListener(function (externalPort) {
   externalPort.onDisconnect.addListener(function () {
     windowOpen = false;
+    saveStates();
     console.log("onDisconnect");
   });
   windowOpen = true;
