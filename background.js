@@ -8,6 +8,7 @@ var clearPrevious = false;
 var workMode = true;
 var pausedMinutes = null;
 var pausedSeconds = null;
+var savedTimeObj = null;
 
 chrome.runtime.onStartup.addListener(() => {
   resetTimeLeft();
@@ -50,6 +51,8 @@ function reset() {
   return new Promise((resolve, reject) => {
     paused = true;
     started = false;
+    updateStates();
+    saveStates();
     resetTimeLeft();
     setTimeout(() => {
       resolve("resolved");
@@ -63,7 +66,7 @@ function refreshTime() {
   if (started && !paused) clearPrevious = true;
   // if (started && paused) setTimeLeft(pausedMinutes, pausedSeconds);
   updateButtonStatus();
-  sendUpdatedTime();
+  // sendUpdatedTime();
   if (!paused) {
     startTimer();
   }
@@ -76,7 +79,8 @@ function saveResetTime(min) {
 function resetTimeLeft() {
   var defaultValue = { minutes: 25, seconds: 0 };
   chrome.storage.local.get({ savedTime: defaultValue }, (data) => {
-    setTimeLeft(data.savedTime.minutes, data.savedTime.seconds);
+    setTimeLeft(data.savedTime.minutes, 0);
+    sendUpdatedTime();
   });
 }
 
@@ -129,6 +133,7 @@ function decrementTimeLeft() {
 }
 
 function startTimer() {
+  updateUiWithNewTime(savedTimeObj);
   if (!clearPrevious) paused = !paused;
   if (paused) setTimeLeft(pausedMinutes, pausedSeconds);
   updateButtonStatus();
@@ -161,9 +166,11 @@ function startTimer() {
       if (!paused) {
         decrementTimeLeft();
         stringTimeObj = stringifyTime(timeObj);
-        if (windowOpen && portConnected) {
-          updateUiWithNewTime(stringTimeObj);
-        }
+        savedTimeObj = stringTimeObj;
+        updateUiWithNewTime(stringTimeObj);
+        // if (windowOpen && portConnected) {
+        // updateUiWithNewTime(stringTimeObj);
+        // }
       }
       if (timeLeft.minutes <= 0 && timeLeft.seconds <= 0) {
         timerFinished();
@@ -211,6 +218,7 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
     saveStates();
     console.log("onDisconnect");
   });
+  updateUiWithNewTime(savedTimeObj);
   windowOpen = true;
   console.log("onConnect");
 });

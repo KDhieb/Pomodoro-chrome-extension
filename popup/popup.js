@@ -141,12 +141,13 @@ function refreshTime() {
 
 function updateTime(timeObj) {
   timerMin.innerHTML = `${timeObj.time.minutes}`;
+  console.log("Seconds" + timeObj.time.seconds);
   timerSec.innerHTML = `${timeObj.time.seconds}`;
-  setTimeout(() => {
-    if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
-      // can also handle it here
-    }
-  }, 50);
+  // setTimeout(() => {
+  //   if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
+  //     // can also handle it here
+  //   }
+  // }, 50);
 }
 
 function enableClickShield() {
@@ -203,7 +204,6 @@ setMinuteListener(
       var minuteValue = timerMin.innerHTML.trim();
       if (isValidNumber(minuteValue)) {
         timerSec.innerHTML = "00";
-        // timerMin.innerHTML = minuteValue;
         port.postMessage({ status: "set", minutes: parseInt(minuteValue) });
       } else {
         timerMin.innerHTML = "25";

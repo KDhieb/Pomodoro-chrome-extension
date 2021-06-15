@@ -10,13 +10,13 @@
 }
 
 a:hover del {
-  /* color: #333333; */
-  color: #22e359;
+  color: #a9a9a9;
+  /* color: #22e359; */
 }
 
 a:hover text {
-  /* color: #333333; */
-  color: #de3039;
+  color: #a9a9a9;
+  /* color: #de3039; */
 }
 
 #title {
