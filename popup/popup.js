@@ -6,12 +6,12 @@ var clearTodosBtn = document.querySelector("#clear-todos");
 window.onload = function () {
   refreshTodos();
   refreshTime();
-  setTimeout(() => {
-    console.log("Refreshing time");
-  }, 1);
+  setTimeout(() => {}, 1);
   enableClickShield();
   setMinuteListener();
 };
+
+// /TODO LIST IMPLEMENTATION
 
 function refreshTodos() {
   while (todoList.firstChild) todoList.removeChild(todoList.firstChild);
@@ -61,41 +61,36 @@ function changeTodoStatus(obj) {
     obj.done = !obj.done;
     arr[objIndex] = obj;
     chrome.storage.local.set({ todos: arr });
-    console.log(`Changed status of object: ${obj.title}`);
     refreshTodos();
   });
 }
 
-// Clear all todos
+// * Clear all todos
 clearTodosBtn.onclick = function () {
   // chrome.storage.local.clear();
   chrome.storage.local.set({ todos: [] });
   refreshTodos();
 };
 
-// Add Todo
+// * Add Todo
 addTodoBtn.onclick = function () {
   let todo = { title: todoField.value, done: false };
-  // let todo = todoField.value;
   if (todo.title != "") {
     chrome.storage.local.get("todos", (data) => {
       if (typeof data.todos === "undefined") {
         var todoArray = [todo];
-        chrome.storage.local.set({ todos: todoArray }, () => {
-          console.log(`First todo added: ${todo}`);
-        });
+        chrome.storage.local.set({ todos: todoArray }, () => {});
       } else {
         data.todos.push(todo);
-        chrome.storage.local.set({ todos: data.todos }, () => {
-          console.log(`New todo added: ${todo}`);
-        });
+        chrome.storage.local.set({ todos: data.todos }, () => {});
       }
       refreshTodos();
     });
   }
 };
 
-// Timer Implementation
+//  TIMER IMPLEMENTATION
+
 var timerMin = document.querySelector("#timer-min");
 var timerSec = document.querySelector("#timer-sec");
 var startBtn = document.querySelector("#start-timer");
@@ -103,6 +98,7 @@ var resetBtn = document.querySelector("#reset-timer");
 
 var port = chrome.runtime.connect({ name: "popup" });
 
+// * Sending messages to background script
 startBtn.onclick = function () {
   var min = timerMin.innerHTML;
   var sec = timerSec.innerHTML;
@@ -117,13 +113,16 @@ function setTime(minutes, seconds) {
   port.postMessage({ status: "set", minutes: minutes, seconds: seconds });
 }
 
-// timer.innerHTML = "testing"; how to edit inner text value
+function refreshTime() {
+  port.postMessage({ status: "refresh" });
+}
+
+// * Port for receiving messages from background script
 port.onMessage.addListener(function (msg) {
-  if (msg.status == "starting timer") {
-  } else if (msg.status == "time update") {
+  if (msg.status == "time update") {
     updateTime(msg);
   } else if (msg.status == "done") {
-    console.log("done");
+    alert("Timer is done!");
   } else if (msg.status == "button status") {
     if (msg.paused) {
       startBtn.innerHTML = "&#9658;";
@@ -135,19 +134,11 @@ port.onMessage.addListener(function (msg) {
   }
 });
 
-function refreshTime() {
-  port.postMessage({ status: "refresh" });
-}
-
 function updateTime(timeObj) {
   timerMin.innerHTML = `${timeObj.time.minutes}`;
-  console.log("Seconds" + timeObj.time.seconds);
-  timerSec.innerHTML = `${timeObj.time.seconds}`;
-  // setTimeout(() => {
-  //   if (timeObj.time.minutes <= 0 && timeObj.time.seconds <= 0) {
-  //     // can also handle it here
-  //   }
-  // }, 50);
+  var seconds = parseInt(timeObj.time.seconds);
+  if (seconds < 10) seconds = `0${seconds}`;
+  timerSec.innerHTML = `${seconds}`;
 }
 
 function enableClickShield() {
@@ -172,12 +163,10 @@ toggle = false;
 collapseBtn.onclick = function () {
   toggle = !toggle;
   if (toggle) {
-    // topWrapper.style.height = "800px";
     bottomContainer.style.display = "block";
     bottomContainer.style.height = "320px";
     collapseText.innerHTML = "-";
   } else {
-    // topWrapper.style.height = "250px";
     bottomContainer.style.display = "none";
     bottomContainer.style.height = "50px";
     collapseText.innerHTML = "+";
@@ -185,7 +174,6 @@ collapseBtn.onclick = function () {
 };
 
 // change time
-
 function setMinuteListener(keyup, blur) {
   timerMin.addEventListener("keyup", keyup);
   timerMin.addEventListener("delete", keyup);
@@ -224,11 +212,3 @@ document.getElementById("settings").onclick = () => {
     window.open(chrome.runtime.getURL("options.html"));
   }
 };
-
-// document.querySelector("#settings").addEventListener(() => {
-//   if (chrome.runtime.openOptionsPage) {
-//     chrome.runtime.openOptionsPage();
-//   } else {
-//     window.open(chrome.runtime.getURL("options.html"));
-//   }
-// });
